@@ -127,27 +127,99 @@ struct Long {
 	ll base = (ll)1e4;
 	vll num = {1, 0};
 };
-Long operator+(Long& a, Long& b) {
+
+void printLong(Long&);
+
+Long operator*(Long a, ll b) {
+	int n = a.num[0];
+	fi(1, n) {
+		a.num[i] *= b;
+		if(i > 1) {
+			a.num[i] += a.num[i - 1] / a.base;
+			a.num[i - 1] %= a.base;
+		}
+	}
+	if(a.num[n] / a.base) {
+		a.num.pb(a.num[n] / a.base);
+		a.num[n] %= a.base;
+		a.num[0]++;
+	}
+	return a;
+}
+Long sum(Long& a, Long& b, ll u = 0) {
+	int n = a.num[0];
+	int m = b.num[0] + u;
+	Long res;
+	res.num = vll(1, 0);
+	fi(1, max(n, m)) {
+		ll val1 = (i <= n ? a.num[i] : 0);
+		ll val2 = (u < i && i <= m ? b.num[i - u] : 0);
+		ll sum = val1 + val2;
+
+		res.num.pb(sum);
+		res.num[0]++;
+
+		if(i > 1) {
+			res.num[i] += res.num[i - 1] / res.base;
+			res.num[i - 1] %= res.base;
+		}
+	}
+	int w = a.num[0];
+	if(res.num[w] / res.base) {
+		res.num.pb(res.num[w] / res.base);
+		res.num[0]++;
+		res.num[w] %= res.base;
+	}
+	return res;
+}
+Long operator*(Long& a, Long& b) {
 	int n = a.num[0];
 	int m = b.num[0];
 	Long res;
-	fi(1, max(n, m)) {
-		ll val1 = (i <= n ? a.num[i] : 0);
-		ll val2 = (i <= m ? b.num[i] : 0);
-		ll sum = val1 + val2;
-		if(i > res.num[0]) {
-			res.num.pb(sum);
-			res.num[0]++;
-		} else {
-			res.num[i] += sum;
-		}
-		if(res.num[i] / res.base) {
-			res.num.pb(res.num[i] / res.base);
-			res.num[0]++;
-			res.num[i] %= res.base;
-		}
+	fj(1, m) {
+		Long val;
+		val = a * b.num[j];
+		res = sum(res, val, j - 1);
 	}
 	return res;
+}
+Long readLong();
+
+Long a, b;
+
+void solve() {
+	if(a.num[0] == 1 && a.num[1] == 0 || b.num[0] == 1 && b.num[1] == 0) {
+		cout << 0 << ln;
+		return;
+	}
+	Long ans;
+	ans = a * b;
+	printLong(ans);
+}
+
+
+#define FILE ""
+int main()
+{
+    #ifdef LOCAL
+        freopen("input.txt", "r", stdin);
+        freopen("output.txt", "w", stdout);
+	#else
+		// freopen(FILE".in", "r", stdin);
+        // freopen(FILE".out", "w", stdout);
+    #endif
+
+	auto START = clock();
+
+	a = readLong();
+	b = readLong();
+
+	if(a.num[0] < b.num[0]) swap(a, b);
+
+    solve();
+
+	auto END = clock();
+	dbg(END - START);
 }
 
 void printLong(Long& a) {
@@ -182,34 +254,4 @@ Long readLong() {
 		i -= 4;
 	}
 	return res;
-}
-
-Long a, b;
-
-void solve() {
-	Long ans = a + b;
-	printLong(ans);
-}
-
-
-#define FILE ""
-int main()
-{
-    #ifdef LOCAL
-        freopen("input.txt", "r", stdin);
-        freopen("output.txt", "w", stdout);
-	#else
-		// freopen(FILE".in", "r", stdin);
-        // freopen(FILE".out", "w", stdout);
-    #endif
-
-	auto START = clock();
-
-	a = readLong();
-	b = readLong();
-
-    solve();
-
-	auto END = clock();
-	dbg(END - START);
 }

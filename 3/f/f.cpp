@@ -1,5 +1,5 @@
 #define _CRT_SECURE_NO_WARNINGS
-#define ln "\n"
+#define ln '\n'
 #define All(x) (x).begin(), (x).end()
 #define Allr(x) (x).rbegin(), (x).rend()
 #define Allf(x) x.begin() + 1, x.end()
@@ -123,78 +123,40 @@ ostream& operator<<(ostream& os, map<T1, T2> t) {
 #define ass(x) assert(x)
 #endif
 
-struct Long {
-	ll base = (ll)1e4;
-	vll num = {1, 0};
-};
-Long operator+(Long& a, Long& b) {
-	int n = a.num[0];
-	int m = b.num[0];
-	Long res;
-	fi(1, max(n, m)) {
-		ll val1 = (i <= n ? a.num[i] : 0);
-		ll val2 = (i <= m ? b.num[i] : 0);
-		ll sum = val1 + val2;
-		if(i > res.num[0]) {
-			res.num.pb(sum);
-			res.num[0]++;
-		} else {
-			res.num[i] += sum;
-		}
-		if(res.num[i] / res.base) {
-			res.num.pb(res.num[i] / res.base);
-			res.num[0]++;
-			res.num[i] %= res.base;
-		}
-	}
-	return res;
-}
-
-void printLong(Long& a) {
-	auto n = a.num[0];
-	printf("%lld", a.num[n]);
-	fdi(n - 1, 1) {
-		printf("%04lld", a.num[i]);
-	}
-	printf(ln);
-}
-Long readLong() {
-	Long res;
-	string s;
-	cin >> s;
-	s = "000" + s;
-	dbg(s);
-	int n = sz(s);
-	int i = n - 1;
-	int q = 0;
-	while(i >= 3) {
-		ll next = 0;
-		fj(i - 3, i) {
-			next = next * 10 + (s[j] - '0');
-		}
-		q++;
-		if(q == 1) {
-			res.num[1] = next;
-		} else {
-			res.num.pb(next);
-			res.num[0]++;
-		}
-		i -= 4;
-	}
-	return res;
-}
-
-Long a, b;
+ll n;
 
 void solve() {
-	Long ans = a + b;
-	printLong(ans);
+	ll val = 1;
+	vvll mtr(n + 1, vll(n + 1));
+	int x = 1, y = 1;
+	int u = 1;
+	bool f = true;
+	while(val <= n * n) {
+		mtr[x][y] = val++;
+		dbg(mp(x, y));
+		dbg(mtr[x][y]);
+		dbg(u);
+		if(f && y == n) { x++; u = -1; f = false; }
+		else if(f && x == 1) { y++; u = -1; f = false; }
+		else if(f && x == n) { y++; u = 1; f = false; }
+		else if(f && y == 1) { x++; u = 1; f = false; }
+		else {x -= u; y += u; f = true; }
+	}
+	fi(1, n) {
+		fj(1, n) {
+			cout << mtr[i][j] << ' ';
+		}
+		cout << ln;
+	}
 }
 
 
 #define FILE ""
 int main()
 {
+    ios::sync_with_stdio(0);
+    cin.tie(0);
+    cout.tie(0);
     #ifdef LOCAL
         freopen("input.txt", "r", stdin);
         freopen("output.txt", "w", stdout);
@@ -205,8 +167,7 @@ int main()
 
 	auto START = clock();
 
-	a = readLong();
-	b = readLong();
+	cin >> n;
 
     solve();
 
