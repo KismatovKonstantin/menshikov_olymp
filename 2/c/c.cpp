@@ -126,28 +126,34 @@ ostream& operator<<(ostream& os, map<T1, T2> t) {
 const ll inf = (ll)1e9;
 
 int n;
-vvi mtr;
+vvi matr;
+vvi p;
 
 
 void solve() {
 	vvi d(n + 1, vi(n + 1, inf));
-	d[1][1] = mtr[1][1];
+	d[1][1] = matr[1][1];
 	fi(1, n) {
 		fj(1, n) {
 			if(i == 1 && j == 1) continue;
-			d[i][j] = min(d[i - 1][j], d[i][j - 1]) + mtr[i][j];
+			if(d[i - 1][j] < d[i][j - 1]) {
+				d[i][j] = d[i - 1][j] + matr[i][j];
+				p[i][j] = 1;
+			} else {
+				d[i][j] = d[i][j - 1] + matr[i][j];
+				p[i][j] = 2;
+			}
 		}
 	}
 	vvc ans(n + 1, vc(n + 1, '-'));
 
 	ans[1][1] = '#';
 
-	int i = n, j = n;
-	while(!(i == 1 && j == 1)) {
-		ans[i][j] = '#';
-		ll val = d[i][j] - mtr[i][j];
-		if(d[i - 1][j] == val) i--;
-		else j--;
+	int x = n, y = n;
+	while(x != 1 || y != 1) {
+		ans[x][y] = '#';
+		if(p[x][y] == 1) x--;
+		else y--;
 	}
 
 	fi(1, n) {
@@ -173,10 +179,11 @@ int main()
 	auto START = clock();
 
 	cin >> n;
-	mtr = vvi(n + 1, vi(n + 1, inf));
+	matr = vvi(n + 1, vi(n + 1, inf));
+	p = vvi(n + 1, vi(n + 1, 0));
 	fi(1, n) {
 		fj(1, n) {
-			scanf("%1d", &mtr[i][j]);
+			scanf("%1d", &matr[i][j]);
 		}
 	}
 

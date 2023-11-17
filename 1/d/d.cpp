@@ -123,25 +123,24 @@ ostream& operator<<(ostream& os, map<T1, T2> t) {
 #define ass(x) assert(x)
 #endif
 
-ld eps = 1e-9;
-
 struct Point {
 	ll x, y;
 };
-
+Point to_vec(const Point& a, const Point& b) {
+	return Point{b.x - a.x, b.y - a.y};
+}
 
 Point A, B, C, D;
 
-ll double_area(Point a, Point b, Point c) {
-	ll res = abs(a.x * b.y + b.x * c.y + c.x * a.y - b.x * a.y - c.x * b.y - a.x * c.y);
-	return res;
+ll cross(const Point& a, const Point& b) {
+	return abs(a.x * b.y - b.x * a.y);
 }
 
 void solve() {
-	ll s = double_area(A, B, C);
-	ll s1 = double_area(A, B, D);
-	ll s2 = double_area(A, C, D);
-	ll s3 = double_area(C, B, D);
+	ll s = cross(to_vec(A, B), to_vec(A, C));
+	ll s1 = cross(to_vec(A, B), to_vec(A, D));
+	ll s2 = cross(to_vec(A, C), to_vec(A, D));
+	ll s3 = cross(to_vec(B, C), to_vec(B, D));
 
 	if(s == s1 + s2 + s3) {
 		cout << "In" << ln;

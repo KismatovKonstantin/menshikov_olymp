@@ -124,12 +124,12 @@ ostream& operator<<(ostream& os, map<T1, T2> t) {
 #endif
 
 ll a, b;
-vb not_prime;
+vb prime;
 
 void solve() {
 	vll ans;
 	fi(a, b) {
-		if(!not_prime[i]) {
+		if(prime[i]) {
 			ans.pb(i);
 		}
 	}
@@ -140,14 +140,12 @@ void solve() {
 }
 
 void init() {
-	ll n = (ll)2e6;
-	not_prime = vb(n + 1);
+	ll n = 1000000LL;
+	prime = vb(n + 1, true);
 	fi(2, n) {
-		if(not_prime[i]) continue;
-		ll u = 2;
-		while(i * u <= n) {
-			not_prime[i * u] = true;
-			u++;
+		if(!prime[i]) continue;
+		for(int j = 2; i * j <= n; j++) {
+			prime[i * j] = false;
 		}
 	}
 }

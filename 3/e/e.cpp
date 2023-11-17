@@ -124,77 +124,71 @@ ostream& operator<<(ostream& os, map<T1, T2> t) {
 #endif
 
 struct Long {
-	ll base = (ll)1e4;
-	vll num = {1, 0};
+	int base = 10000;
+	int len = 4;
+	vi num = {1, 0};
+	int operator[](int x) const {
+		return num[x];
+	}
+	int& operator[](int x) {
+		if(x > num[0]) {
+			num.resize(x + 1, 0);
+			num[0] = x;
+		}
+		return num[x];
+	}
 };
-
-void printLong(Long&);
-
-Long operator*(Long a, ll b) {
-	int n = a.num[0];
-	fi(1, n) {
-		a.num[i] *= b;
-		if(i > 1) {
-			a.num[i] += a.num[i - 1] / a.base;
-			a.num[i - 1] %= a.base;
-		}
-	}
-	if(a.num[n] / a.base) {
-		a.num.pb(a.num[n] / a.base);
-		a.num[n] %= a.base;
-		a.num[0]++;
-	}
-	return a;
-}
-Long sum(Long& a, Long& b, ll u = 0) {
-	int n = a.num[0];
-	int m = b.num[0] + u;
+Long operator*(const Long& a, const Long& b) {
 	Long res;
-	res.num = vll(1, 0);
-	fi(1, max(n, m)) {
-		ll val1 = (i <= n ? a.num[i] : 0);
-		ll val2 = (u < i && i <= m ? b.num[i - u] : 0);
-		ll sum = val1 + val2;
-
-		res.num.pb(sum);
-		res.num[0]++;
-
-		if(i > 1) {
-			res.num[i] += res.num[i - 1] / res.base;
-			res.num[i - 1] %= res.base;
+	fi(1, a[0]) {
+		if(a[i] == 0) continue;
+		fj(1, b[0]) {
+			if(a[i] * b[j] == 0) continue;
+			int x = i + j - 1;
+			res[x] += a[i] * b[j];
+			while(x > 1 && res[x - 1] / res.base) {
+				res[x] += res[x - 1] / res.base;
+				res[x - 1] %= res.base;
+			}
 		}
-	}
-	int w = a.num[0];
-	if(res.num[w] / res.base) {
-		res.num.pb(res.num[w] / res.base);
-		res.num[0]++;
-		res.num[w] %= res.base;
+		while(res[res[0]] / res.base) {
+			int g = res[0];
+			res[g + 1] += res[g] / res.base;
+			res[g] %= res.base;
+		}
 	}
 	return res;
 }
-Long operator*(Long& a, Long& b) {
-	int n = a.num[0];
-	int m = b.num[0];
+
+Long str_to_Long(string s) {
 	Long res;
-	fj(1, m) {
-		Long val;
-		val = a * b.num[j];
-		res = sum(res, val, j - 1);
+	int x = 1;
+	int n = sz(s);
+	for(int i = n - 1; i >= 0; i -= res.len) {
+		int val = 0;
+		for(int j = max(0, i - res.len + 1); j <= i; j++) {
+			val = val * 10 + (s[j] - '0');
+		}
+		res[x] = val;
+		x++;
 	}
 	return res;
 }
-Long readLong();
+
+void print(const Long& a) {
+	printf("%d", a[a[0]]);
+	fdi(a[0] - 1, 1) {
+		printf("%04d", a[i]);
+	}
+	printf("\n");
+}
 
 Long a, b;
 
 void solve() {
-	if(a.num[0] == 1 && a.num[1] == 0 || b.num[0] == 1 && b.num[1] == 0) {
-		cout << 0 << ln;
-		return;
-	}
 	Long ans;
 	ans = a * b;
-	printLong(ans);
+	print(ans);
 }
 
 
@@ -211,8 +205,11 @@ int main()
 
 	auto START = clock();
 
-	a = readLong();
-	b = readLong();
+	string s1, s2;
+	cin >> s1 >> s2;
+
+	a = str_to_Long(s1);
+	b = str_to_Long(s2);
 
 	if(a.num[0] < b.num[0]) swap(a, b);
 
@@ -220,38 +217,4 @@ int main()
 
 	auto END = clock();
 	dbg(END - START);
-}
-
-void printLong(Long& a) {
-	auto n = a.num[0];
-	printf("%lld", a.num[n]);
-	fdi(n - 1, 1) {
-		printf("%04lld", a.num[i]);
-	}
-	printf(ln);
-}
-Long readLong() {
-	Long res;
-	string s;
-	cin >> s;
-	s = "000" + s;
-	dbg(s);
-	int n = sz(s);
-	int i = n - 1;
-	int q = 0;
-	while(i >= 3) {
-		ll next = 0;
-		fj(i - 3, i) {
-			next = next * 10 + (s[j] - '0');
-		}
-		q++;
-		if(q == 1) {
-			res.num[1] = next;
-		} else {
-			res.num.pb(next);
-			res.num[0]++;
-		}
-		i -= 4;
-	}
-	return res;
 }

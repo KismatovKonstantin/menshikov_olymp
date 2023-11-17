@@ -125,34 +125,28 @@ ostream& operator<<(ostream& os, map<T1, T2> t) {
 
 ll n;
 string s;
+vb color;
+string res = "";
 set<string> ans;
 
-void rec(int x, vll p, multiset<ll> t) {
-	if(sz(t) == 0) {
-		string res = "";
-		fi(1, n) res += s[p[i] - 1];
+void rec(int x) {
+	if(x == n) {
 		ans.ins(res);
 		return;
 	}
-	auto t2 = t;
-	fz(t) {
-		t2.erase(z);
-		p[x] = z;
-		rec(x + 1, p, t2);
-		t2.ins(z);
+	fi(0, n - 1) {
+		if(color[i]) continue;
+		res += s[i];
+		color[i] = true;
+		rec(x + 1);
+		res.pop_back();
+		color[i] = false;
 	}
 }
 
 void solve() {
-	multiset<ll> t;
-	vll p(n + 1);
-	fi(1, n) {
-		t.ins(i);
-	}
-	rec(1, p, t);
-	fz(ans) {
-		cout << z << ln;
-	}
+	rec(0);
+	fz(ans) cout << z << ln;
 }
 
 
@@ -174,6 +168,7 @@ int main()
 
 	cin >> s;
 	n = sz(s);
+	color = vb(n, false);
 
     solve();
 

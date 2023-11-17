@@ -126,24 +126,30 @@ ostream& operator<<(ostream& os, map<T1, T2> t) {
 struct Point {
 	ll x, y;
 };
-
-int area(Point a, Point b, Point c) {
-	ll res = (a.x - b.x) * (a.y - c.y) - (a.x - c.x) * (a.y - b.y);
-	if(res < 0) return -1;
-	if(res == 0) return 0;
-	if(res > 0) return 1;
+Point to_vec(const Point& a, const Point& b) {
+	return Point{b.x - a.x, b.y - a.y};
 }
-bool fun(Point a, Point b, Point c) {
+
+ll cross(const Point& a, const Point& b) {
+	return a.x * b.y - a.y * b.x;
+}
+int sign(ll x) {
+	if(x < 0) return -1;
+	if(x == 0) return 0;
+	if(x > 0) return 1;
+}
+
+bool fun(const Point& a, const Point& b, const Point& c) {
 	return min(a.x, b.x) <= c.x && c.x <= max(a.x, b.x)
 		&& min(a.y, b.y) <= c.y && c.y <= max(a.y, b.y);
 }
 
 Point a, b, c, d;
 void solve() {
-	ll s1 = area(a, b, c);
-	ll s2 = area(a, b, d);
-	ll s3 = area(c, d, a);
-	ll s4 = area(c, d, b);
+	ll s1 = sign(cross(to_vec(a, b), to_vec(b, c)));
+	ll s2 = sign(cross(to_vec(a, b), to_vec(b, d)));
+	ll s3 = sign(cross(to_vec(c, d), to_vec(d, a)));
+	ll s4 = sign(cross(to_vec(c, d), to_vec(d, b)));
 	
 	ll v1 = s1 * s2;
 	ll v2 = s3 * s4;
