@@ -93,7 +93,15 @@ ostream& operator<<(ostream& os, vector<T> v) {
 	}
 	return os;
 }
- 
+template<typename T>
+ostream& operator<<(ostream& os, vector<vector<T>> v) {
+	os << ln;
+	fi(0, sz(v) - 1) {
+		os << v[i] << ln;
+	}
+	return os;
+}
+
 template<typename T>
 ostream& operator<<(ostream& os, set<T> t) {
 	for (auto z : t) {
@@ -123,47 +131,81 @@ ostream& operator<<(ostream& os, map<T1, T2> t) {
 #define ass(x) assert(x)
 #endif
 
-struct Person {
-	ll t, p, s;
+struct Point {
+	ll x, y;
+	bool operator<(const Point& b) const {
+		return mp(x, y) < mp(b.x, b.y);
+	}
+	bool operator==(const Point& b) const {
+		return mp(x, y) == mp(b.x, b.y);
+	}
 };
-bool operator<(Person x, Person y) {
-	bool f1 = (x.t < y.t);
-	bool f2 = (x.t == y.t && x.p < y.p);
-	bool f3 = (x.t == y.t && x.p == y.p && x.s < y.s);
-	return f1 || f2 || f3;
-}
-ostream& operator<<(ostream& os, Person p) {
-	os << "t: " << p.t << ln;
-	os << "p: " << p.p << ln;
-	os << "s: " << p.s << ln;
+ostream& operator<<(ostream& os, Point p) {
+	os << mp(p.x, p.y);
 	return os;
 }
+Point to_vec(const Point& a, const Point& b) {
+	return Point{b.x - a.x, b.y - a.y};
+}
+ll cross(const Point& a, const Point& b) {
+	return a.x * b.y - a.y * b.x;
+}
+ld dist(const Point& a, const Point& b) {
+	return sqrt((a.x - b.x)*(a.x - b.x) + (a.y - b.y)*(a.y - b.y));
+}
 
-ll n, k, t;
-vector<Person> v;
+const ld eps = 1e-9;
 
-vll d;
+ll n;
+vector<Point> v;
+
+Point A, B;
 
 void solve() {
-	d = vll(n + 1);
-	d[0] = 0;
-	fi(1, n) {
-		fj(0, i - 1) {
-			if(abs(v[i].s - v[j].s) <= abs(v[i].t - v[j].t)) {
-				d[i] = max(d[i], d[j] + v[i].p);
+	A = v[1];
+	B = v[n];
+
+	vector<Point> up;
+	vector<Point> down;
+	up.pb(A);
+	down.pb(A);
+
+	fi(2, n) {
+		ll g = cross(to_vec(A, B), to_vec(A, v[i]));
+		if (g >= 0) {
+			int w = sz(up) - 1;
+			while(sz(up) >= 2 && cross(to_vec(up[w - 1], up[w]), to_vec(up[w], v[i])) >= 0) {
+				up.pop_back();
+				w--;
 			}
+			up.pb(v[i]);
+		}
+		if (g <= 0) {
+			dbg(v[i]);
+			int w = sz(down) - 1;
+			while(sz(down) >= 2 && cross(to_vec(down[w - 1], down[w]), to_vec(down[w], v[i])) <= 0) {
+				down.pop_back();
+				w--;
+			}
+			down.pb(v[i]);
 		}
 	}
-	dbg(d);
-	ll ans = 0;
-	fi(1, n) {
-		ans = max(ans, d[i]);
+	dbg(up);
+	dbg(down);
+	ld ans = 0;
+	fi(1, sz(up) - 1) {
+		ans += dist(up[i], up[i - 1]);
 	}
+	fi(1, sz(down) - 1) {
+		ans += dist(down[i], down[i - 1]);
+	}
+	cout << fixed;
+	cout.precision(1);
 	cout << ans << ln;
 }
 
 
-#define FILE ""
+#define FILE "conhull"
 int main()
 {
     ios::sync_with_stdio(0);
@@ -179,30 +221,17 @@ int main()
 
 	auto START = clock();
 
-	cin >> n >> k >> t;
-	v = vector<Person>(n + 1);
+	cin >> n;
+	v = vector<Point>(n + 1);
 	fi(1, n) {
-		ll _t;
-		cin >> _t;
-		v[i] = Person{_t, 0, 0};
-	}
-	fi(1, n) {
-		ll _p;
-		cin >> _p;
-		v[i].p = _p;
-	}
-	fi(1, n) {
-		ll _s;
-		cin >> _s;
-		v[i].s = _s;
-		if(v[i].s > v[i].t) {
-			v[i].p = 0;
-			v[i].s = 0;
-		}
+		ll x, y;
+		cin >> x >> y;
+		v[i] = Point{x, y};
 	}
 	sort(Allf(v));
+
     solve();
 
-	auto END = clock();
-	dbg(END - START);
+	auto TIME = (ld)(clock() - START) / CLOCKS_PER_SEC;
+	dbg(TIME);
 }

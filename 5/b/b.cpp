@@ -128,40 +128,39 @@ map<char, char> t {
 	{ '(', ')' },
 	{ '[', ']' }
 };
+vc b = { '(', '[' };
 
-void fun(stack<char> st, vector<char> v, int q = 0) {
-	if(sz(v) == n) {
-		fi(0, n - 1) {
-			cout << v[i];
+vc v;
+stack<char> st;
+void rec(int q, int w) {
+	if(w == n) {
+		fz(v) {
+			cout << z;
 		}
 		cout << ln;
 		return;
 	}
 	if(sz(st)) {
 		char c = st.top();
-		v.pb(t[c]);
 		st.pop();
-		fun(st, v, q);
+		v.pb(t[c]);
+		rec(q, w + 1);
 		v.pop_back();
 		st.push(c);
 	}
 	if(q < n / 2) {
-		v.pb('(');
-		st.push('(');
-		fun(st, v, q + 1);
-		v.pop_back();
-		st.pop();
-
-		v.pb('[');
-		st.push('[');
-		fun(st, v, q + 1);
+		fz(b) {
+			st.push(z);
+			v.pb(z);
+			rec(q + 1, w + 1);
+			v.pop_back();
+			st.pop();
+		}
 	}
 }
 
 void solve() {
-	stack<char> st;
-	vector<char> v;
-	fun(st, v);
+	rec(0, 0);
 }
 
 
@@ -175,8 +174,8 @@ int main()
         freopen("input.txt", "r", stdin);
         freopen("output.txt", "w", stdout);
 	#else
-		freopen(FILE".in", "r", stdin);
-        freopen(FILE".out", "w", stdout);
+		// freopen(FILE".in", "r", stdin);
+        // freopen(FILE".out", "w", stdout);
     #endif
 
 	auto START = clock();

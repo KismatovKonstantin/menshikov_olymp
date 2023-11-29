@@ -125,32 +125,27 @@ ostream& operator<<(ostream& os, map<T1, T2> t) {
 
 ll n;
 string s;
+stack<char> st;
+
+char fun(char c) {
+	if(c == ')') return '(';
+	if(c == ']') return '[';
+	if(c == '}') return '{';
+}
 
 void solve() {
-	stack<pii> st;
 	fz(s) {
-		if(z == '(') {
-			st.push({1, 1});
-		} else if(z == '[') {
-			st.push({1, 2});
-		} else if(z == '{') {
-			st.push({1, 3});
-		} else if(sz(st) > 0 && z == ')' && st.top() == mp(1, 1)) {
-			st.pop();
-		} else if(sz(st) > 0 && z == ']' && st.top() == mp(1, 2)) {
-			st.pop();
-		} else if(sz(st) > 0 && z == '}' && st.top() == mp(1, 3)) {
+		if(z == '(' || z == '[' || z == '{') {
+			st.push(z);
+		} else if(sz(st) && st.top() == fun(z)) {
 			st.pop();
 		} else {
 			cout << "No" << ln;
 			return;
 		}
 	}
-	if(sz(st) != 0) {
-		cout << "No" << ln;
-	} else {
-		cout << "Yes" << ln;
-	}
+	if(sz(st)) cout << "No" << ln;
+	else cout << "Yes" << ln;
 }
 
 

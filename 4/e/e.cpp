@@ -124,73 +124,65 @@ ostream& operator<<(ostream& os, map<T1, T2> t) {
 #endif
 
 struct Long {
-	ll len = 4;
-	ll base = (ll)1e4;
-	vll num = {1, 0};
+	int base = 10000;
+	vi num = {1, 0};
+	int operator[](int x) const {
+		if(num[0] < x) return 0;
+		return num[x];
+	}
+	int& operator[](int x) {
+		if(num[0] < x) {
+			num.resize(x + 1, 0);
+			num[0] = x;
+		}
+		return num[x];
+	}
 };
-void printLong(Long& a) {
-	ll n = a.num[0];
-	printf("%lld", a.num[n]);
-	fdi(n - 1, 1) {
-		printf("%04lld", a.num[i]);
+pair<Long, int> operator/(const Long& a, int b) {
+	Long res;
+	int x = 1;
+	ll d = 0, m = 0;
+	fdi(a[0], 1) {
+		ll val = m * a.base + a[i];
+		dbg(val);
+		d = val / b;
+		m = val % b;
+		dbg(mp(d, m));
+		if(x == 1 && d == 0) continue;
+		res[x] = d;
+		x++;
+	}
+	reverse(Allf(res.num));
+	return mp(res, m);
+}
+void print(const Long& a) {
+	printf("%d", a[a[0]]);
+	fdi(a[0] - 1, 1) {
+		printf("%04d", a[i]);
 	}
 	printf(ln);
 }
-Long readLong() {
+Long str_to_Long(string s) {
+	int n = sz(s);
 	Long res;
-	string s;
-	cin >> s;
-	fi(1, res.len - 1) s = "0" + s;
-	dbg(s);
-	auto n = sz(s);
-	int i = n - 1;
-	int q = 0;
-	while(i >= res.len - 1) {
-		ll next = 0;
-		fj(i - res.len + 1, i) {
-			next = next * 10 + (s[j] - '0');
+	int x = 1;
+	for(int i = n - 1; i >= 0; i -= 4) {
+		int val = 0;
+		for(int j = max(0, i - 3); j <= i; j++) {
+			val = val * 10 + s[j] - '0';
 		}
-		q++;
-		if(q == 1) {
-			res.num[1] = next;
-		} else {
-			res.num.pb(next);
-			res.num[0]++;
-		}
-		i -= res.len;
+		res[x] = val;
+		x++;
 	}
-	return res;
-}
-
-pair<Long, ll> operator/(Long& a, ll b) {
-	pair<Long, ll> res;
-	auto n = a.num[0];
-	vll v;
-	ll d = 0, m = 0;
-	fdi(n, 1) {
-		ll val = a.num[i] + m * a.base;
-		d = val / b;
-		m = val % b;
-		if(sz(v) == 0 && d == 0) continue;
-		v.pb(d);
-	}
-
-	res.first.num = vll(1, 0);
-	fdi(sz(v) - 1, 0) {
-		res.first.num.pb(v[i]);
-		res.first.num[0]++;
-	}
-	res.second = m;
-
 	return res;
 }
 
 Long a;
-ll b;
+int b;
 
 void solve() {
 	auto ans = a / b;
-	printLong(ans.first);
+	print(ans.first);
 	cout << ans.second;
 }
 
@@ -208,7 +200,9 @@ int main()
 
 	auto START = clock();
 
-	a = readLong();
+	string s;
+	cin >> s;
+	a = str_to_Long(s);
 	cin >> b;
 
     solve();

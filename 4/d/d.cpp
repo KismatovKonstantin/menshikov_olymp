@@ -127,20 +127,22 @@ struct Point {
 	ll x, y;
 };
 
+ll cross(Point a, Point b) {
+	return a.x * b.y - a.y * b.x;
+}
+
 int n;
 vector<Point> v;
 
 
 void solve() {
-	ll res1 = 0;
-	ll res2 = 0;
+	ll res = 0;
 	fi(1, n) {
-		res1 += v[i].x * v[i + 1].y;
-		res2 += v[i].y * v[i + 1].x;
+		res += cross(v[i], v[i + 1]);
 	}
 	cout << fixed;
 	cout.precision(1);
-	cout << (ld)abs(res1 - res2) / 2 << ln;
+	cout << abs(res) / 2. << ln;
 }
 
 

@@ -126,14 +126,14 @@ ostream& operator<<(ostream& os, map<T1, T2> t) {
 ll d0, m0;
 ll d, m, y;
 
-vll mnth{0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
+vll days{0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31};
 
-bool fun(ll x) {
+bool is_leap(ll x) {
 	return (x % 400 == 0 || x % 4 == 0 && x % 100 != 0);
 }
-ll days_in_month(ll x1, ll x2) {
-	if(x1 == 2 && fun(x2)) return 29;
-	return mnth[x1];
+ll days_in_month(ll m, ll y) {
+	if(m == 2 && is_leap(y)) return 29;
+	return days[m];
 }
 
 void solve() {

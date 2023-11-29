@@ -123,33 +123,33 @@ ostream& operator<<(ostream& os, map<T1, T2> t) {
 #define ass(x) assert(x)
 #endif
 
-ll n;
-set<vll> ans;
+int n;
+vi v;
+int s;
 
-void rec(vll v) {
-	dbg(v);
-	ll s = 0;
-	fz(v) s += z;
-	if(s == n) {
-		if(sz(v) > 1) {
-			cout << v[0];
-			fi(1, sz(v) - 1) cout << "+" << v[i];
-			cout << ln;
+void rec() {
+	if(s == 0) {
+		if(sz(v) == 1) return;
+		cout << v[0];
+		fi(1, sz(v) -1) {
+			cout << "+" << v[i];
 		}
+		cout << ln;
 		return;
 	}
-	ll val = 1;
-	if(sz(v)) val = v.back();
-	fi(val, n - s) {
-		vll new_v = v;
-		new_v.pb(i);
-		rec(new_v);
+	int g = (sz(v) ? v.back() : 1);
+	fi(g, s) {
+		v.pb(i);
+		s -= i;
+		rec();
+		v.pop_back();
+		s += i;
 	}
 }
 
 void solve() {
-	vll v;
-	rec(v);
+	s = n;
+	rec();
 }
 
 
