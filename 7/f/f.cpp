@@ -132,8 +132,6 @@ bool is_valid(int x, int y) {
 	bool f2 = (1 <= y && y <= m);
 	if(!f1 || !f2) return false;
 
-	if(mtr[x][y] != '#') return false;
-	if(color[x][y]) return false;
 	return true;
 }
 
@@ -141,10 +139,14 @@ vi dx{-1, 0, 1, 0};
 vi dy{0, 1, 0, -1};
 
 void dfs(int x, int y) {
-	if(!is_valid(x, y)) return;
+	if (color[x][y]) return;
+	if (mtr[x][y] != '#') return;
 	color[x][y] = 1;
 	fo(0, 3) {
-		dfs(x + dx[o], y + dy[o]);
+		int x2 = x + dx[o];
+		int y2 = y + dy[o];
+		if (!is_valid(x2, y2)) continue;
+		dfs(x2, y2);
 	}
 }
 
@@ -154,7 +156,8 @@ void solve() {
 	ll ans = 0;
 	fi(1, n) {
 		fj(1, m) {
-			if(!is_valid(i, j)) continue;
+			if (color[i][j]) continue;
+			if (mtr[i][j] != '#') continue;
 			ans++;
 			dfs(i, j);
 		}
@@ -173,8 +176,8 @@ int main()
         freopen("input.txt", "r", stdin);
         freopen("output.txt", "w", stdout);
 	#else
-		freopen(FILE".in", "r", stdin);
-        freopen(FILE".out", "w", stdout);
+		// freopen(FILE".in", "r", stdin);
+        // freopen(FILE".out", "w", stdout);
     #endif
 
 	auto START = clock();

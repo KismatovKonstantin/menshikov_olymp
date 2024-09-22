@@ -138,7 +138,7 @@ void solve() {
 		return;
 	}
 
-	ld u = 0.0001;
+	ld u = 0.00001;
 	for(ld i = 0; i <= 1; i += u) {
 		ld x = i;
 		ld y = sqrt(1 - x * x);

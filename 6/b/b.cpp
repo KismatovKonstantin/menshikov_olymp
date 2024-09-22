@@ -1,3 +1,5 @@
+#pragma GCC optimize("O2")
+#pragma GCC optimize("unroll-loops")
 #define _CRT_SECURE_NO_WARNINGS
 #define ln '\n'
 #define All(x) (x).begin(), (x).end()
@@ -124,20 +126,21 @@ ostream& operator<<(ostream& os, map<T1, T2> t) {
 #endif
 
 int n;
-vll a;
-set<ll> t;
+vi a;
+unordered_set<int> t;
 
 void solve() {
+	vi add;
 	t.ins(0);
 	fi(1, n) {
-		vll add;
 		fz(t) {
 			add.pb(a[i] + z);
 		}
 		t.ins(a[i]);
 		fx(add) t.ins(x);
+		add.clear();
 	}
-	dbg(t);
+	// dbg(t);
 	cout << sz(t) << ln;
 }
 
@@ -152,19 +155,19 @@ int main()
         freopen("input.txt", "r", stdin);
         freopen("output.txt", "w", stdout);
 	#else
-		freopen(FILE".in", "r", stdin);
-        freopen(FILE".out", "w", stdout);
+		// freopen(FILE".in", "r", stdin);
+        // freopen(FILE".out", "w", stdout);
     #endif
 
 	auto START = clock();
 
 	cin >> n;
-	a = vll(n + 1);
+	a = vi(n + 1);
 	fi(1, n) cin >> a[i];
-	sort(Allf(a));
+	// sort(Allf(a));
 
     solve();
 
 	auto END = clock();
-	dbg(END - START);
+	dbg(ld(END - START) / CLOCKS_PER_SEC);
 }

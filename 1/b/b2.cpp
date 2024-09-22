@@ -123,22 +123,22 @@ ostream& operator<<(ostream& os, map<T1, T2> t) {
 #define ass(x) assert(x)
 #endif
 
-ll n, s;
-vll a;
+int n, s;
+vi a;
 
 void solve() {
-	ll m = (1LL << n);
+	int m = (1 << (n - 1));
 
-	fi(0LL, m - 1) {
-        ll val = a[0];
+	fi(0, m - 1) {
+        int val = a[0];
 		fj(1, n - 1) {
-            val += (i & (1 << j) ? 1 : -1) * a[j];
+            val += (i & (1 << (j - 1)) ? 1 : -1) * a[j];
         }
 
         if (val == s) {
             cout << a[0];
             fj(1, n - 1) {
-                cout << (i & (1 << j) ? "+" : "-") << a[j];
+                cout << (i & (1 << (j - 1)) ? "+" : "-") << a[j];
             }
             cout << "=" << s << ln;
             return;
@@ -160,7 +160,7 @@ int main()
 	auto START = clock();
 
 	cin >> n >> s;
-	a = vll(n);
+	a = vi(n);
 	fi(0, n - 1) {
 		cin >> a[i];
 	}	

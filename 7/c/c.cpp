@@ -155,8 +155,8 @@ int main()
         freopen("input.txt", "r", stdin);
         freopen("output.txt", "w", stdout);
 	#else
-		freopen(FILE".in", "r", stdin);
-        freopen(FILE".out", "w", stdout);
+		// freopen(FILE".in", "r", stdin);
+        // freopen(FILE".out", "w", stdout);
     #endif
 
 	auto START = clock();
