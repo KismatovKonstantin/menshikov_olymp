@@ -114,70 +114,42 @@ ostream& operator<<(ostream& os, map<T1, T2> t) {
 
 mt19937_64 rnd(chrono::steady_clock::now().time_since_epoch().count());
 
-map<string, int> to_num {
-	{ "AA", 1 },
-	{ "BB", 2 },
-	{ "AB", 3 },
-	{ "BA", 4 }
-};
-
-map<int, int> to_short = {
-	{ 1, 1 },
-	{ 2, 2 },
-	{ 3, 3 },
-	{ 4, 4 },
-	{ 11, 1 },
-	{ 13, 3 },
-	{ 22, 2 },
-	{ 24, 4 },
-	{ 32, 3 },
-	{ 34, 1 },
-	{ 41, 4 },
-	{ 43, 2 } 
-};
 
 int n, k;
-int lok;
-map<int, int> q;
-// set<string> t;
-map<pii, int> t;
+string lok;
+map<string, int> cnt;
+ll ans = 0;
 
-int rec(const int& st, const int& len) {
-	if (t.count(mp(st, len))) return t[mp(st, len)];
-	if (len == k) {
-		if (to_short.count(lok * 10 + st) || to_short.count(st * 10 + lok)) {
-			dbg(lok);
-			dbg(mp(st, len));
-			return t[mp(st, len)] += 1;
-		}
+map<vi, ll> d;
+
+ll rec(int AA, int BB, int AB, int BA, int R) {
+	if (d.count({AA, BB, AB, BA, R})) return d[{AA, BB, AB, BA, R}];
+
+	if (AA + BB + AB + BA == k) {
+		if (R == (lok[0] == 'B')) return d[{AA, BB, AB, BA, R}] = 1;
+		else return d[{AA, BB, AB, BA, R}] = 0;
 	}
-	fz(q) {
-		if (z.second == 0) continue;
 
-		int val = st * 10 + z.first;
-		if (to_short.count(val) == 0) continue;
-
-		auto new_st = to_short[val];
-		z.second--;
-		t[mp(st, len)] += rec(new_st, len + 1);
-		z.second++;
+	if (R == 0) {
+		if (AA < cnt["AA"]) d[{AA, BB, AB, BA, R}] += rec(AA + 1, BB, AB, BA, 0);
+		if (AB < cnt["AB"]) d[{AA, BB, AB, BA, R}] += rec(AA, BB, AB + 1, BA, 1);
+	} else {
+		if (BB < cnt["BB"]) d[{AA, BB, AB, BA, R}] += rec(AA, BB + 1, AB, BA, 1);
+		if (BA < cnt["BA"]) d[{AA, BB, AB, BA, R}] += rec(AA, BB, AB, BA + 1, 0);
 	}
-	return t[mp(st, len)];
+	return d[{AA, BB, AB, BA, R}];
 }
 
 void solve() {
-	dbg(q);
-	rec(0, 0);
-	dbg(t);
-	int ans = t[mp(0, 0)];
-	if (ans == 0) {
-		cout << "NO" << ln;
-	} else {
+	ll ans = rec(0, 0, 0, 0, lok[1] == 'B');
+	dbg(d);
+	if (ans) {
 		cout << "YES" << ln;
 		cout << ans << ln;
+	} else {
+		cout << "NO" << ln;
 	}
 }
-
 
 #define FILE ""
 int main()
@@ -196,14 +168,12 @@ int main()
 	auto START = clock();
 
 	cin >> n >> k;
+	cin >> lok;
 	string s;
-	cin >> s;
-	lok = to_num[s];
 	fi(1, n) {
 		cin >> s;
-		q[to_num[s]]++;
+		cnt[s]++;
 	}
-
     solve();
 
 	auto TIME = ld(clock() - START) / CLOCKS_PER_SEC;

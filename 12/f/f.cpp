@@ -114,14 +114,40 @@ ostream& operator<<(ostream& os, map<T1, T2> t) {
 
 mt19937_64 rnd(chrono::steady_clock::now().time_since_epoch().count());
 
-string base;
-int n;
-vs v;
+void parse(string s, map<string, int>& q) {
+	vector<int> mul;
+	int num = 1;
+	string el = "";
+	fi(0, sz(s) - 1) {
+		if ('A' <= s[i] && s[i] <= 'Z') {
+			el += s[i];
+			while('a' <= s[i + 1] && s[i + 1] <= 'z') {
+				el += s[i + 1];
+				i++;
+			}
+		} else if () {
 
-void solve() {
-	
+		}
+	}
 }
 
+string base;
+map<string, int> Q;
+int n;
+
+void solve(string s) {
+	map<string, int> q;
+	parse(s, q);
+	if (q == Q) {
+		cout << base << "==" << s << ln;
+	} else {
+		cout << base << "!=" << s << ln;
+	}
+}
+
+void init() {
+	parse(base, Q);
+}
 
 #define FILE ""
 int main()
@@ -141,10 +167,12 @@ int main()
 
 	cin >> base;
 	cin >> n;
-	v = vs(n + 1);
-	fi(1, n) cin >> v[i];
+	fi(1, n) {
+		string s;
+		cin >> s;
+    	solve(s);
+	}
 
-    solve();
 
 	auto TIME = ld(clock() - START) / CLOCKS_PER_SEC;
 	dbg(TIME);

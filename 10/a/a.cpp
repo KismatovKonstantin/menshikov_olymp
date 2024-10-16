@@ -174,36 +174,47 @@ void solve() {
 }
 
 
+map<int, vi> small_n {
+	{ 1, vi{1} },
+	{ 2, vi{1, 2} },
+	{ 3, vi{1, 3, 2} },
+	{ 4, vi{1, 4, 2, 3} },
+	{ 5, vi{1, 4, 5, 3, 2} },
+	{ 6, vi{1, 4, 6, 3, 2, 5} },
+	{ 7, vi{1, 4, 6, 7, 2, 5, 3} },
+	{ 8, vi{1, 4, 6, 8, 2, 5, 3, 7} }
+};
 
 void solve2() {
 	vll ans(n + 1);
 	int l = 1, r = n;
 	int cur = 1;
 	while(l <= r) {
-		dbg(b);
 		int h = (l + r) / 2;
-		if(cur == n - 1) {
-			ans[b[h]] = n;
-			ans[b[h + 1]] = n - 1;
+		if(cur == n - 7) {
+			dbg(b);
+			dbg(ans);
+			int c = 0;
+			fi(n - 7, n) { 
+				ans[b[i]] = small_n[8][c++] + cur - 1;				
+			}
+			dbg(ans);
 			break;
 		}
 		ans[b[h]] = cur++;
 		swap(b[l], b[h]);
 		l++;
-		dbg(ans);
-		dbg(b);
 	}
 	fi(1, n) {
 		cout << ans[i] << " ";
 	}
-	dbg(b);
-	dbg(ans);
 }
 
 void print() {
 	solve();
 	exit(0);
 }
+
 
 #define FILE ""
 int main()
@@ -228,8 +239,8 @@ int main()
 	}
 
 	// print();
-	if (n <= 7) solve();
-    else solve2();
+	if (n <= 8) cout << small_n[n] << ln;
+	else solve2();
 
 	auto TIME = ld(clock() - START) / CLOCKS_PER_SEC;
 	dbg(TIME);

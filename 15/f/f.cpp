@@ -114,18 +114,90 @@ ostream& operator<<(ostream& os, map<T1, T2> t) {
 
 mt19937_64 rnd(chrono::steady_clock::now().time_since_epoch().count());
 
+struct Poly {
+	vector<int> c;
+	Poly() {
+		c.resize(21, 0);
+	}
+};
+pair<int, int> parse(char* s) {
+	int coef, p;
+	char tmp[100];
+	tmp[0] = 0;
+	if (sscanf(s, "%dx^%d", &coef, &p) == 2) {
+		return {coef, p};
+	} else if (sscanf(s, "%d%[x]", &coef, tmp) == 2) {
+		return {coef, 1};
+	} else if (sscanf(s, "%d", &coef) == 1) {
+		return {coef, 0};
+	} else if (sscanf(s, "x^%d", &p) == 1) {
+		return {1, p};
+	} else if (sscanf(s, "%[x]", tmp) == 1) {
+		return {1, 1};
+	}	
+	
+}
+void read(Poly& a) {
+	char tmp[100];
+	char s[100];
+	char sign = '+';
+
+	if (scanf("%[+-]", tmp) == 1) {
+		sign = tmp[0];
+		dbg(sign);
+	}
+
+	while(scanf("%[^+-\n]%[+-]", s, tmp) > 0) {
+		string g = s;
+		dbg(g);
+		auto [coef, p] = parse(s);
+		dbg(mp(coef, p));
+		a.c[p] += (sign == '+' ? coef : -coef);
+		sign = tmp[0];
+	}
+	scanf("\n");
+}
+void print(const Poly& a) {
+	bool fl = false;
+	fdi(20, 1) {
+		if (a.c[i] == 0) continue;
+
+		if (a.c[i] > 0 && fl) printf("+");
+
+		if (a.c[i] == -1) printf("-");
+		else if (a.c[i] != 1) printf("%d", a.c[i]);
+		printf("x");
+		if (i > 1) {
+			printf("^%d", i);
+		}
+
+		fl = true;
+	}
+	if (a.c[0] > 0 && fl) printf("+");
+	if (a.c[0] != 0 || !fl) printf("%d", a.c[0]);
+	printf("\n");
+}
+Poly operator* (const Poly& a, const Poly& b) {
+	Poly res;
+	fi(0, 10) {
+		fj(0, 10) {
+			res.c[i + j] += a.c[i] * b.c[j];
+		}
+	}
+	return res;
+}
+
+Poly a, b, c;
 
 void solve() {
-
+	c = a * b;
+	print(c);
 }
 
 
 #define FILE ""
 int main()
 {
-    ios::sync_with_stdio(0);
-    cin.tie(0);
-    cout.tie(0);
     #ifdef LOCAL
         freopen("input.txt", "r", stdin);
         freopen("output.txt", "w", stdout);
@@ -136,7 +208,8 @@ int main()
 
 	auto START = clock();
 
-	
+	read(a);
+	read(b);
 
     solve();
 
