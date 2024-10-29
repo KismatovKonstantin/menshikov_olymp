@@ -114,38 +114,107 @@ ostream& operator<<(ostream& os, map<T1, T2> t) {
 
 mt19937_64 rnd(chrono::steady_clock::now().time_since_epoch().count());
 
-int n;
-vs v;
-vi res;
-
-void solve() {
-	int m = sz(v) - 1;
-
-	int q = 0;
-	fi(1, m) {
-		if (v[i] == "BEGIN" || v[i] == "LOOP") q++;
-		if (v[i] == "END") q--;
-
-		
+struct Poly {
+	int n = 0;
+	vector<int> c = { 0 };
+	int operator[](int x) const {
+		if (x > n) return 0;
+		return c[x];
 	}
+	int& operator[](int x)  {
+		if (x > n) {
+			c.resize(x + 1, 0);
+			n = x;
+		}
+		return c[x];
+	}
+};
+Poly operator+(const Poly& a, const Poly& b) {
+	Poly res;
+	fi(0, a.n) res[i] += a[i];
+	fi(0, b.n) res[i] += b[i];
+	return res;
+}
+Poly operator*(const Poly& a, int x) {
+	Poly res;
+	fi(0, a.n) {
+		res[i] = a[i] * x;
+	}
+	return res;
+}
+Poly operator*(const Poly& a, string s) {
+	Poly res;
+	fdi(a.n, 0) res[i + 1] = a[i];
+	return res;
 }
 
-void read() {
+int n;
+vector<string> v;
+
+Poly solve(int L, int R) {
+	int L_ = L, R_ = R;
+	Poly res;
+	while(L <= R) {
+		if (v[L] == "BEGIN") { 
+			L++; R--;
+		} else if (v[L] == "LOOP") {
+			int q = 1;
+			int r;
+			fi(L + 2, R) {
+				if (v[i] == "LOOP") q++;
+				if (v[i] == "END") q--;
+				if (q == 0) {
+					r = i - 1;
+					break;
+				}
+			}
+			if (v[L + 1] == "n") {
+				res = res + (solve(L + 2, r) * "n");
+			} else {
+				res = res + (solve(L + 2, r) * stoi(v[L + 1]));
+			}
+			L = r + 2;
+		} else if (v[L] == "OP") {
+			res[0] += stoi(v[L + 1]);
+			L += 2;
+		} else L++;
+	}
+	dbg(mp(L_, R_));
+	dbg(res.c);
+	return res;
+}
+
+vector<string> read() {
+	vector<string> res;
 	string s;
 	int q = 0;
 	while(cin >> s) {
-		v.pb(s);
+		res.pb(s);
 		if (s == "BEGIN" || s == "LOOP") q++;
 		if (s == "END") q--;
-
-		if (q == 0) return;
+		if (q == 0) break;
 	}
+	return res;
 }
 
-void print_ans(int num) {
+void print_ans(int num, const Poly& ans) {
 	cout << "Program #" << num << ln;
 	cout << "Runtime = ";
-	
+	bool zero = true;
+	bool first = true;
+	fdi(ans.n, 0) {
+		if (ans[i] == 0) continue;
+		zero = false;
+		if (!first) cout << "+";
+		first = false;
+		if (i == 0) cout << ans[i];
+		else if (ans[i] > 1) cout << ans[i] << "*n";
+		else cout << "n";
+		if (i > 1) cout << "^" << i;
+	}
+	if (zero) cout << 0;
+	cout << ln;
+	cout << ln;
 }
 
 #define FILE ""
@@ -166,10 +235,11 @@ int main()
 
 	cin >> n;
 	fi(1, n) {
-		v = vs(1);
-		read();
-		solve();
-		print_ans(i);
+		v = read();
+		dbg(sz(v));
+		dbg(v);
+		auto ans = solve(0, sz(v) - 1);
+		print_ans(i, ans);
 	}
 
 	auto TIME = ld(clock() - START) / CLOCKS_PER_SEC;

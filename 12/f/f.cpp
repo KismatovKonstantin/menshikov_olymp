@@ -114,30 +114,115 @@ ostream& operator<<(ostream& os, map<T1, T2> t) {
 
 mt19937_64 rnd(chrono::steady_clock::now().time_since_epoch().count());
 
-void parse(string s, map<string, int>& q) {
-	vector<int> mul;
-	int num = 1;
-	string el = "";
-	fi(0, sz(s) - 1) {
-		if ('A' <= s[i] && s[i] <= 'Z') {
-			el += s[i];
-			while('a' <= s[i + 1] && s[i + 1] <= 'z') {
-				el += s[i + 1];
-				i++;
-			}
-		} else if () {
-
-		}
-	}
+bool is_cap(char c) {
+	return ('A' <= c && c <= 'Z');
 }
+bool is_small(char c) {
+	return ('a' <= c && c <= 'z');
+}
+bool is_digit(char c) {
+	return ('0' <= c && c <= '9');
+}
+
 
 string base;
 map<string, int> Q;
 int n;
+map<string, int> q;
+string s;
 
-void solve(string s) {
-	map<string, int> q;
-	parse(s, q);
+map<string, int> rec(int L, int R) {
+	dbg(mp(L, R));
+	map<string, int> res;
+	if (L > R) return res;
+	int num = 1;
+	int l = L, r = R;
+	dbg(s);
+	dbg(s[l]);
+	if(is_digit(s[l])) {
+		int x = 0;
+		while(is_digit(s[l])) {
+			x = x * 10 + (s[l] - '0');
+			l++;
+		}
+		num = x;
+		res = rec(l, r);
+		fz(res) {
+			z.second *= num;
+		}
+	} else {
+		while(l <= r) {
+			if (s[l] == '(') {
+				int k = 0;
+				map<string, int> tmp;
+				fi(l, r) {
+					if (s[i] == '(') k++;
+					else if (s[i] == ')') k--;
+
+					if (k == 0) {
+						tmp = rec(l + 1, i - 1);
+						l = i + 1;
+						break;
+					}
+				}
+				if (is_digit(s[l])) {
+					int x = 0;
+					while(l <= r && is_digit(s[l])) {
+						x = x * 10 + (s[l] - '0');
+						l++;
+					}
+					fz(tmp) z.second *= x;
+				}
+				fz(tmp) {
+					res[z.first] += z.second;
+				}
+			} else {
+				string el = "";
+				if (is_cap(s[l])) el += s[l++];
+				if (is_small(s[l])) el += s[l++];
+				dbg(el);
+				num = 1;
+				if (is_digit(s[l])) {
+					int x = 0;
+					while(l <= r && is_digit(s[l])) {
+						x = x * 10 + (s[l] - '0');
+						l++;
+					}
+					num = x;
+				}
+				dbg(num);
+				res[el] += num;
+			}
+		}
+	}
+	dbg(res);
+	return res;
+}
+
+void parse() {
+	int L = 0, R = 0;
+	fi(0, sz(s) - 1) {
+		if (s[i] == '+') {
+			R = i - 1;
+			auto res = rec(L, R);
+			fz(res) {
+				q[z.first] += z.second;
+			}
+			L = i + 1;
+		}
+	}
+	auto res = rec(L, sz(s) - 1);
+	fz(res) {
+		q[z.first] += z.second;
+	}
+}
+
+
+void solve() {
+	q.clear();
+	parse();
+	dbg(s);
+	dbg(q);
 	if (q == Q) {
 		cout << base << "==" << s << ln;
 	} else {
@@ -146,7 +231,9 @@ void solve(string s) {
 }
 
 void init() {
-	parse(base, Q);
+	parse();
+	Q = q;
+	base = s;
 }
 
 #define FILE ""
@@ -165,12 +252,13 @@ int main()
 
 	auto START = clock();
 
-	cin >> base;
+	cin >> s;
+	init();
+
 	cin >> n;
 	fi(1, n) {
-		string s;
 		cin >> s;
-    	solve(s);
+    	solve();
 	}
 
 
